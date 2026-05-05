@@ -1,0 +1,80 @@
+@namespace HybridTest.Components
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using HybridTest.Components.Hybrid
+@using HybridTest.Services
+@inject IHardwareService Hardware
+
+<HybridColumns>
+    <HybridColumn>
+        <p>Current count
+            <HybridText Content="@currentCount.ToString()" Foreground="@Spectre.Console.Color.Green" />
+        </p>
+    </HybridColumn>
+</HybridColumns>
+
+<HybridColumns>
+    <HybridColumn>
+        <p>Status
+            <HybridText Content="@deviceStatus" Foreground="@Spectre.Console.Color.Blue" />
+        </p>
+    </HybridColumn>
+</HybridColumns>
+
+<HybridColumns>
+    <HybridColumn>
+        <p>Sensor
+            <HybridText Content="@sensorValue.ToString("F2")" Foreground="@Spectre.Console.Color.Green" />
+        </p>
+    </HybridColumn>
+</HybridColumns>
+
+<HybridColumns>
+    <HybridColumn>
+        <p>Other
+            <HybridText Content="@eventText" Foreground="@Spectre.Console.Color.Red" />
+        </p>
+    </HybridColumn>
+</HybridColumns>
+
+<HybridColumns>
+    <HybridColumn ColumnSize="6">
+        <HybridButton Content="Click me"
+              OnClick="IncrementCount" />
+    </HybridColumn>
+    <HybridColumn ColumnSize="6">
+        <HybridButton Content="Read sensor"
+              OnClick="ReadSensor" />
+    </HybridColumn>
+</HybridColumns>
+
+@code {
+    private int currentCount = 0;
+    private string deviceStatus = "";
+    private double sensorValue = 0;
+    private string eventText = "";
+
+    protected override void OnInitialized()
+    {
+        deviceStatus = Hardware.GetDeviceStatus();
+        sensorValue = Hardware.ReadSensorValue();
+        Hardware.OnHardwareEvent += HandleHardwareEvent;
+    }
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+    private void ReadSensor()
+    {
+        sensorValue = Hardware.ReadSensorValue();
+    }
+
+    private void HandleHardwareEvent(object? sender, CustomEventArgs e)
+    {
+        eventText = $"Event: {e.Message}";
+        InvokeAsync(StateHasChanged);
+    }
+
+}

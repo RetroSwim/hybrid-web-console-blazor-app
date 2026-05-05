@@ -1,0 +1,18 @@
+@namespace HybridTest.Components.Hybrid
+@using Microsoft.AspNetCore.Components
+@using HybridTest.Services
+@using RazorConsole.Components
+@inject IHostingMode HostingMode
+
+@if (HostingMode.IsWeb)
+{
+    <div class="row">@ChildContent</div>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

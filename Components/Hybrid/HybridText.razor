@@ -1,0 +1,24 @@
+@namespace HybridTest.Components.Hybrid
+@using Microsoft.AspNetCore.Components
+@using HybridTest.Services
+@using RazorConsole.Components
+@inject IHostingMode HostingMode
+
+@if (HostingMode.IsWeb)
+{
+    <span style="color: @WebColor;">@Content</span>
+}
+else
+{
+    <Markup Content="@Content" Foreground="@Foreground" />
+}
+
+@code {
+    [Parameter] public string Content { get; set; } = "";
+    [Parameter] public Spectre.Console.Color Foreground { get; set; } = Spectre.Console.Color.Default;
+
+    private string WebColor => Foreground == Spectre.Console.Color.Green ? "green"
+                             : Foreground == Spectre.Console.Color.Red ? "red"
+                             : Foreground == Spectre.Console.Color.Blue ? "blue"
+                             : "inherit";
+}

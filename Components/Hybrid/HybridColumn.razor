@@ -1,0 +1,21 @@
+@namespace HybridTest.Components.Hybrid
+@using Microsoft.AspNetCore.Components
+@using HybridTest.Services
+@using RazorConsole.Components
+@inject IHostingMode HostingMode
+
+@if (HostingMode.IsWeb)
+{
+    <div class="@ColumnClass">@ChildContent</div>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter] public int ColumnSize { get; set; } = 12;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private string ColumnClass => $"col-md-{ColumnSize}";
+}

@@ -1,0 +1,23 @@
+@namespace HybridTest.Components.Hybrid
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using HybridTest.Services
+@using RazorConsole.Components
+@inject IHostingMode HostingMode
+
+@if (HostingMode.IsWeb)
+{
+    <button @onclick="OnClick" style="padding: 8px 16px; cursor: pointer;">@Content</button>
+}
+else
+{
+    <TextButton Content="@Content"
+                                        OnClick="OnClick"
+                                        BackgroundColor="@Spectre.Console.Color.Grey"
+                                        FocusedColor="@Spectre.Console.Color.Blue" />
+}
+
+@code {
+    [Parameter] public string Content { get; set; } = "";
+    [Parameter] public Action? OnClick { get; set; }
+}
