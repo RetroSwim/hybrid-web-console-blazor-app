@@ -8,24 +8,28 @@ bool webMode = args.Contains("--web") || bothMode;
 bool consoleMode = !args.Contains("--web") || bothMode;
 
 var tasks = new List<Task>();
-WebApplication? app = null;
-IHardwareService hardwareService = new HardwareService();
 
+// app out here so we can AsyncStop it later.
+WebApplication? app = null;
+
+// Little bit of de-duplication
 void ConfigureCommonServices(IServiceCollection services, HostingModeKind mode)
 {
     services.AddSingleton<IHostingMode>(_ => new HostingMode(mode));
-    services.AddSingleton(hardwareService);
+    services.AddSingleton<IHardwareService>(_ => HardwareService.Instance);
 }
 
 if (webMode)
 {
-    var webArgs = args.Where(a => a != "--both" && a != "--web").ToArray();
-    var builder = WebApplication.CreateBuilder(webArgs);
+    var builder = WebApplication.CreateBuilder(args);
+    
     if (bothMode)
     {
+        // Suppress Log4Net tty output when RazorConsole is in use
         builder.Logging.ClearProviders();
         builder.Logging.AddDebug();
     }
+    
     builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents();
 
@@ -39,6 +43,7 @@ if (webMode)
 
     if (bothMode)
     {
+        // Print the URLs since the Log4Net output is suppressed
         await app.StartAsync();
         foreach (var url in app.Urls)
         {
@@ -53,11 +58,11 @@ if (webMode)
 
 if (consoleMode)
 {
-    IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args)
-        .ConfigureServices((s) => ConfigureCommonServices(s, HostingModeKind.Console))
+    var hostBuilder = Host.CreateDefaultBuilder(args)
+        .ConfigureServices(s => ConfigureCommonServices(s, HostingModeKind.Console))
         .UseRazorConsole<Counter>();
 
-    IHost host = hostBuilder.Build();
+    var host = hostBuilder.Build();
     tasks.Add(host.RunAsync());
 }
 
@@ -68,10 +73,9 @@ Console.WriteLine("Shutdown sequence initiated...");
 if (bothMode)
 {
     // When the console host exits, stop the web host too
+    Console.WriteLine("If stuck here, check if the web page is open somewhere.");
     await app!.StopAsync();
 }
-
-hardwareService.Dispose();
 
 Console.WriteLine("And we're done.");
 

@@ -13,8 +13,7 @@ public interface IHostingMode
     bool IsConsole => Mode == HostingModeKind.Console;
 }
 
-public class HostingMode : IHostingMode
+public class HostingMode(HostingModeKind mode) : IHostingMode
 {
-    public HostingMode(HostingModeKind mode) => Mode = mode;
-    public HostingModeKind Mode { get; }
+    public HostingModeKind Mode { get; } = mode;
 }

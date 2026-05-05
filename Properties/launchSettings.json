@@ -2,11 +2,12 @@
   "profiles": {
     "HybridTest": {
       "commandName": "Project",
-      "launchBrowser": false,
+      "commandLineArgs": "",
+      "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:54343;http://localhost:54344"
+      "applicationUrl": "http://localhost:54344"
     }
   }
 }

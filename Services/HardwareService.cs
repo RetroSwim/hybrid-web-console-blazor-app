@@ -8,23 +8,31 @@ public interface IHardwareService
 {
     string GetDeviceStatus();
     double ReadSensorValue();
-    void Dispose();
     event EventHandler<CustomEventArgs>? OnHardwareEvent;
 
 }
 
-public class HardwareService : IHardwareService
+public sealed class HardwareService : IHardwareService, IDisposable
 {
     private bool _disposed;
 
-    public HardwareService() {
+    public static HardwareService Instance
+    {
+        get
+        {
+            field ??= new HardwareService();
+            return field;
+        }
+    }
+
+    private HardwareService() {
 
         new Thread(() =>
         {
             while (!_disposed)
             {
                 Thread.Sleep(1000);
-                OnHardwareEvent?.Invoke(this, new CustomEventArgs($"Hardware event at {DateTime.Now}"));
+                OnHardwareEvent?.Invoke(this, new CustomEventArgs($"T{Thread.CurrentThread.ManagedThreadId} Hardware event at {DateTime.Now}"));
             }
         }).Start();
 
