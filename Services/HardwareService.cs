@@ -8,11 +8,12 @@ public interface IHardwareService
 {
     string GetDeviceStatus();
     double ReadSensorValue();
+    void Dispose();
     event EventHandler<CustomEventArgs>? OnHardwareEvent;
 
 }
 
-public class HardwareService : IHardwareService, IDisposable
+public class HardwareService : IHardwareService
 {
     private bool _disposed;
 
@@ -50,8 +51,7 @@ public class HardwareService : IHardwareService, IDisposable
     }
 }
 
-public class CustomEventArgs : EventArgs
+public class CustomEventArgs(string message) : EventArgs
 {
-    public string Message { get; }
-    public CustomEventArgs(string message) => Message = message;
+    public string Message { get; } = message;
 }

@@ -1,4 +1,4 @@
-using HybridTest.Services;
+﻿using HybridTest.Services;
 using HybridTest.Components;
 using HybridTest.Components.Web;
 using RazorConsole.Core;
@@ -11,24 +11,9 @@ var tasks = new List<Task>();
 WebApplication? app = null;
 IHardwareService hardwareService = new HardwareService();
 
-// Create a cancellation token source for graceful shutdown
-using var cts = new CancellationTokenSource();
-
-// Register signal handlers for Ctrl+C (SIGINT) and termination (SIGTERM)
-Console.CancelKeyPress += (sender, e) =>
-{
-    e.Cancel = true;
-    cts.Cancel();
-};
-
-AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
-{
-    cts.Cancel();
-};
-
 void ConfigureCommonServices(IServiceCollection services, HostingModeKind mode)
 {
-    services.AddSingleton<IHostingMode>(new HostingMode(mode));
+    services.AddSingleton<IHostingMode>(_ => new HostingMode(mode));
     services.AddSingleton(hardwareService);
 }
 
@@ -59,8 +44,6 @@ if (webMode)
         {
             Console.WriteLine($"Now listening on: {url}");
         }
-        // Pass the cancellation token so the app stops when signaled
-        tasks.Add(app.WaitForShutdownAsync(cts.Token));
     }
     else
     {
@@ -75,15 +58,20 @@ if (consoleMode)
         .UseRazorConsole<Counter>();
 
     IHost host = hostBuilder.Build();
-    // Pass the cancellation token
-    tasks.Add(host.RunAsync(cts.Token));
+    tasks.Add(host.RunAsync());
 }
 
 await Task.WhenAll(tasks);
+
+Console.WriteLine("Shutdown sequence initiated...");
 
 if (bothMode)
 {
     // When the console host exits, stop the web host too
     await app!.StopAsync();
 }
+
+hardwareService.Dispose();
+
+Console.WriteLine("And we're done.");
 
