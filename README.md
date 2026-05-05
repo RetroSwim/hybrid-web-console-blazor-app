@@ -6,13 +6,13 @@ Uses Bootstrap.js for web view, and RazorConsole for console view. Components ha
 
 `dotnet run`
 
-<img width="359" height="126" alt="cli" src="https://github.com/user-attachments/assets/c474bdd3-301c-4e60-9122-87334b72da14" />
+<img width="974" height="390" alt="cli" src="https://github.com/user-attachments/assets/c9a566d5-a15b-4ee9-992e-43963c6320f3" />
 
 ## To run web version
 
 `dotnet run --web`
 
-<img width="370" height="158" alt="web" src="https://github.com/user-attachments/assets/607ca75a-718d-43a5-bb11-1dcd7f9eda06" />
+<img width="1000" height="430" alt="web" src="https://github.com/user-attachments/assets/92bb5389-a40e-4660-a3d3-73be3a4c6813" />
 
 ## To run both at once
 
